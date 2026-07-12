@@ -30,7 +30,8 @@ before_grouping = len(df)
 
 df = df.groupby(
     ["Vehicle Category", "Make", "Model", "Manufacture Year", "District"],
-    as_index=False
+    as_index=False,
+    dropna=False
 )["Count"].sum()
 
 after_grouping = len(df)
