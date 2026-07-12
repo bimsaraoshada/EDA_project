@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Load the dataset
-df = pd.read_excel("C:/Users/DELL/Downloads/EV_No_Duplicates.xlsx")
+df = pd.read_excel(r"C:\Users\ASUS\OneDrive\LMS\3.1\Gruop Project\EV_No_Duplicates.xlsx")
 
 # Store original row count
 original_rows = len(df)
@@ -59,7 +59,7 @@ df["Count"].fillna(count_median, inplace=True)
 # ------------------------------
 # Save cleaned dataset
 # ------------------------------
-output_file = "C:/Users/DELL/Downloads/EV_Handled_Missing_Values.xlsx"
+output_file = r"C:\Users\ASUS\OneDrive\LMS\3.1\Gruop Project\EV_Handled_Missing_Values.xlsx"
 df.to_excel(output_file, index=False)
 
 # ------------------------------
