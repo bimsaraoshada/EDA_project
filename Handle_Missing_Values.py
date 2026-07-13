@@ -1,0 +1,79 @@
+import pandas as pd
+
+# Load the dataset
+df = pd.read_excel(r"C:\Users\ASUS\OneDrive\LMS\3.1\Gruop Project\EV_No_Duplicates.xlsx")
+
+# Store original row count
+original_rows = len(df)
+
+# ------------------------------
+# Remove rows where BOTH Make and Model are missing (.)
+# ------------------------------
+rows_to_remove = df[(df["Make"] == ".") & (df["Model"] == ".")]
+removed_excel_rows = (rows_to_remove.index + 2).tolist()
+
+df = df[~((df["Make"] == ".") & (df["Model"] == "."))].copy()
+
+# ------------------------------
+# Count missing values before handling
+# ------------------------------
+unknown_make_count = (df["Make"] == ".").sum()
+unknown_model_count = (df["Model"] == ".").sum()
+vehicle_category_missing = (df["Vehicle Category"] == ".").sum()
+district_missing = (df["District"] == ".").sum()
+
+# ------------------------------
+# Handle Make and Model
+# ------------------------------
+df.loc[df["Make"] == ".", "Make"] = "Unknown Make"
+df.loc[df["Model"] == ".", "Model"] = "Unknown Model"
+
+# ------------------------------
+# Handle Vehicle Category (Mode)
+# ------------------------------
+category_mode = df[df["Vehicle Category"] != "."]["Vehicle Category"].mode()[0]
+df.loc[df["Vehicle Category"] == ".", "Vehicle Category"] = category_mode
+
+# ------------------------------
+# Handle District (Mode)
+# ------------------------------
+district_mode = df[df["District"] != "."]["District"].mode()[0]
+df.loc[df["District"] == ".", "District"] = district_mode
+
+# ------------------------------
+# Handle Manufacture Year (Median)
+# ------------------------------
+df["Manufacture Year"] = pd.to_numeric(df["Manufacture Year"], errors="coerce")
+year_missing = df["Manufacture Year"].isna().sum()
+year_median = df["Manufacture Year"].median()
+df["Manufacture Year"].fillna(year_median, inplace=True)
+
+# ------------------------------
+# Handle Count (Median)
+# ------------------------------
+df["Count"] = pd.to_numeric(df["Count"], errors="coerce")
+count_missing = df["Count"].isna().sum()
+count_median = df["Count"].median()
+df["Count"].fillna(count_median, inplace=True)
+
+# ------------------------------
+# Save cleaned dataset
+# ------------------------------
+output_file = r"C:\Users\ASUS\OneDrive\LMS\3.1\Gruop Project\EV_Handled_Missing_Values.xlsx"
+df.to_excel(output_file, index=False)
+
+# ------------------------------
+# Print Summary
+# ------------------------------
+print("Missing value handling completed!")
+print("Original rows:", original_rows)
+print(f"Rows removed (both Make and Model missing): {len(removed_excel_rows)}")
+print(f"Removed Excel row numbers: {removed_excel_rows}")
+print(f"'Unknown Make' values added: {unknown_make_count}")
+print(f"'Unknown Model' values added: {unknown_model_count}")
+print(f"Vehicle Category values filled with mode: {vehicle_category_missing}")
+print(f"District values filled with mode: {district_missing}")
+print(f"Manufacture Year values filled with median: {year_missing}")
+print(f"Count values filled with median: {count_missing}")
+print("Final rows:", len(df))
+print(f"Cleaned Excel file saved as: {output_file}")
