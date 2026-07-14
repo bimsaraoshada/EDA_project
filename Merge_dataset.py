@@ -84,6 +84,14 @@ def load_population_rows(path):
         if ds_text is None:
             continue
 
+        # Skip national total rows like 'Sri Lanka'
+        if (
+            (district_text and district_text.casefold() == "sri lanka")
+            or (ds_text and ds_text.casefold() == "sri lanka")
+            or (current_district and current_district.casefold() == "sri lanka")
+        ):
+            continue
+
         rows.append(
             {
                 "District": current_district,
@@ -251,9 +259,9 @@ def main():
         sheet.cell(row_index, 3, population)
 
         sheet.cell(row_index, 4, None)
-        sheet.cell(row_index, 5, f'=IFERROR(C{row_index}/SUMIF($A${data_start}:$A${data_end},A{row_index},$C${data_start}:$C${data_end}),"")')
-        sheet.cell(row_index, 6, f'=IFERROR(C{row_index}/D{row_index},"")')
-        sheet.cell(row_index, 7, f'=IFERROR(0.5*E{row_index}+0.5*F{row_index},"")')
+        sheet.cell(row_index, 5, None)
+        sheet.cell(row_index, 6, None)
+        sheet.cell(row_index, 7, None)
         sheet.cell(row_index, 8, district_ev_total)
         sheet.cell(row_index, 9, None)
         sheet.cell(row_index, 10, charger_counts.get((district_key, division_key), 0))
