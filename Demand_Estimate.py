@@ -151,9 +151,24 @@ out_df["Estimated_EV"] = out_df["Estimated_EV"].round()
 # ===========================
 # Rearrange & Save
 # ===========================
+# "Existing Charging Points in Divisional Secretariat" moves to the very
+# end, after all computed columns, purely for readability. It isn't used
+# anywhere in the calculations above, so this has no effect on results.
+try:
+    charging_points_col = find_column(
+        input_df.columns,
+        ["Existing Charging Points in Divisional Secretariat", "Existing Charging Points", "Charging Points"],
+    )
+except KeyError:
+    charging_points_col = None
+
 new_columns = ["PopulationShare", "Density", "UrbanizationScore", "x", "y", "DemandScore", "TotalScore", "Estimated_EV"]
 existing = list(input_df.columns)
+if charging_points_col is not None:
+    existing.remove(charging_points_col)
 new_columns = [col for col in new_columns if col in out_df.columns]
+if charging_points_col is not None:
+    new_columns = new_columns + [charging_points_col]
 out_df = out_df[existing + new_columns]
 
 out_df = out_df.loc[:, ~out_df.isna().all()]
