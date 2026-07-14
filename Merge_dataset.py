@@ -7,10 +7,10 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 
 
-SRC_POP = r"C:\Users\ASUS\OneDrive\LMS\3.1\Gruop Project\Population_Table_western.xlsx"
-SRC_EV = r"C:\Users\ASUS\OneDrive\LMS\3.1\Gruop Project\Western_Province_Data.xlsx"
-SRC_CHG = r"C:\Users\ASUS\OneDrive\LMS\3.1\Gruop Project\Western_Province_EV_Chargers.xlsx"
-OUT = r"C:\Users\ASUS\OneDrive\LMS\3.1\Gruop Project\Merged_dataset.xlsx"
+SRC_POP = "C:/Users/DELL/Downloads/Population_Table_western.xlsx"
+SRC_EV = "C:/Users/DELL/Downloads/Western_Province_Data.xlsx"
+SRC_CHG = "C:/Users/DELL/Downloads/Western_Province_EV_Chargers.xlsx"
+OUT = "C:/Users/DELL/Downloads/Merged_dataset.xlsx"
 
 
 def normalize_text(value):
@@ -255,9 +255,9 @@ def main():
         sheet.cell(row_index, 6, f'=IFERROR(C{row_index}/D{row_index},"")')
         sheet.cell(row_index, 7, f'=IFERROR(0.5*E{row_index}+0.5*F{row_index},"")')
         sheet.cell(row_index, 8, district_ev_total)
-        sheet.cell(row_index, 9, district_ev_total)
+        sheet.cell(row_index, 9, None)
         sheet.cell(row_index, 10, charger_counts.get((district_key, division_key), 0))
-        sheet.cell(row_index, 11, f'=IFERROR(MAX(0,ROUNDUP(I{row_index}/50,0)-J{row_index}),"")')
+        sheet.cell(row_index, 11, None)
 
     for row_index in range(data_start, data_end + 1):
         for column_index in range(1, 12):
@@ -302,4 +302,5 @@ def main():
 
 
 if __name__ == "__main__":
+    main()
     main()
