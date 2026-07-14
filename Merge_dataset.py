@@ -227,7 +227,6 @@ def main():
         "District EV Count",
         "Divisional Secretariat EV Demand",
         "Existing Charging Points in Divisional Secretariat",
-        "Expected Charging Stations",
     ]
 
     header_row = 5
@@ -239,7 +238,7 @@ def main():
 
     sheet.row_dimensions[header_row].height = 42
 
-    widths = [14, 28, 12, 12, 15, 16, 18, 15, 18, 28, 20]
+    widths = [14, 28, 12, 12, 15, 16, 18, 15, 18, 28]
     for index, width in enumerate(widths, start=1):
         sheet.column_dimensions[get_column_letter(index)].width = width
 
@@ -265,14 +264,13 @@ def main():
         sheet.cell(row_index, 8, district_ev_total)
         sheet.cell(row_index, 9, None)
         sheet.cell(row_index, 10, charger_counts.get((district_key, division_key), 0))
-        sheet.cell(row_index, 11, None)
 
     for row_index in range(data_start, data_end + 1):
-        for column_index in range(1, 12):
+        for column_index in range(1, 11):
             cell = sheet.cell(row_index, column_index)
             cell.font = Font(name="Arial")
             cell.border = border
-            if column_index in (3, 4, 8, 9, 10, 11):
+            if column_index in (3, 4, 8, 9, 10):
                 cell.number_format = '#,##0'
 
     sheet.freeze_panes = f"A{data_start}"
