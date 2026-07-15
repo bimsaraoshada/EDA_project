@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 df = pd.read_excel("C:/Users/DELL/Downloads/EV_Demand_Output.xlsx")
 
 # ======================================================
-# District-wise EV Growth
+# District-wise EV Demand
 # ======================================================
 
 district_growth = (
@@ -17,7 +17,7 @@ district_growth = (
 plt.figure(figsize=(10, 6))
 district_growth.plot(kind="barh")
 
-plt.title("District-wise EV Growth")
+plt.title("District-wise EV Demand")
 plt.xlabel("EV Count")
 plt.ylabel("District")
 
@@ -25,7 +25,7 @@ plt.tight_layout()
 plt.show()
 
 # ======================================================
-# Divisional Secretariat-wise EV Growth
+# Divisional Secretariat-wise EV Demand
 # ======================================================
 
 ds_growth = (
@@ -37,9 +37,10 @@ ds_growth = (
 plt.figure(figsize=(14, 18))
 ds_growth.plot(kind="barh")
 
-plt.title("Divisional Secretariat-wise EV Growth")
+plt.title("Divisional Secretariat-wise EV Demand")
 plt.xlabel("Estimated EV")
 plt.ylabel("Divisional Secretariat Division")
 
 plt.tight_layout()
+plt.show()
 plt.show()
