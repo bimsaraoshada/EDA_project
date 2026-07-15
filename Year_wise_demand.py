@@ -82,16 +82,6 @@ plt.grid(True)
 plt.tight_layout()
 plt.show()
 
-# ==============================
-# 9. Plot 4 - Growth Rate
-# ==============================
-plt.figure(figsize=(8,5))
-plt.bar(yearly_ev[year_col], yearly_ev["Growth Rate (%)"])
-plt.title("Annual EV Growth Rate (%)")
-plt.xlabel("Manufacture Year")
-plt.ylabel("Growth Rate (%)")
-plt.tight_layout()
-plt.show()
 
 # ==============================
 # 10. Save Results
