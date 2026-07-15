@@ -1,118 +1,47 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Load dataset
-df = pd.read_excel(r"C:\Users\ASUS\OneDrive\LMS\3.1\Gruop Project\EV_Demand_Output.xlsx")
+df = pd.read_excel("C:/Users/DELL/Downloads/EV_Demand_Output.xlsx")
 
-# Check columns
-df.columns
+# Select variables for correlation
+correlation = df[
+    [
+        "Population",
+        "PopulationShare",
+        "UrbanizationScore",
+        "DemandScore",
+        "Estimated_EV"
+    ]
+].corr()
 
-# Calculate correlation population vs estimated EV demand
-r_population = df["Population"].corr(df["Estimated_EV"])
+# Print correlation matrix
+print("Correlation Matrix:\n")
+print(correlation)
 
-print("Correlation (Population vs EV Demand):", round(r_population,3))
-
-
-# Scatter plot
-plt.figure(figsize=(8,5))
-
-plt.scatter(
-    df["Population"],
-    df["Estimated_EV"]
-)
-
-plt.xlabel("Population")
-plt.ylabel("Estimated EV Demand")
-plt.title(
-    f"Population vs Estimated EV Demand (r = {r_population:.3f})"
-)
-
-plt.grid(True)
-plt.show()
-
-# Calculate correlation urbanization score vs estimated EV demand
-r_urban = df["UrbanizationScore"].corr(
-    df["Estimated_EV"]
-)
-
-print(
-    "Correlation (Urbanization Score vs EV Demand):",
-    round(r_urban,3)
-)
-
-
-# Scatter plot
-plt.figure(figsize=(8,5))
-
-plt.scatter(
-    df["UrbanizationScore"],
-    df["Estimated_EV"]
-)
-
-plt.xlabel("Urbanization Score")
-plt.ylabel("Estimated EV Demand")
-
-plt.title(
-    f"Urbanization Score vs Estimated EV Demand (r = {r_urban:.3f})"
-)
-
-plt.grid(True)
-plt.show()
-
-# Calculate correlation demand score vs estimated EV demand
-r_demand = df["DemandScore"].corr(
-    df["Estimated_EV"]
-)
-
-print(
-    "Correlation (Demand Score vs EV Demand):",
-    round(r_demand,3)
-)
-
-
-# Scatter plot
-plt.figure(figsize=(8,5))
-
-plt.scatter(
-    df["DemandScore"],
-    df["Estimated_EV"]
-)
-
-plt.xlabel("Demand Score")
-plt.ylabel("Estimated EV Demand")
-
-plt.title(
-    f"Demand Score vs Estimated EV Demand (r = {r_demand:.3f})"
-)
-
-plt.grid(True)
-plt.show()
-
-#correlation matrix and heatmap
-corr_columns = [
-    "Population",
-    "PopulationShare",
-    "UrbanizationScore",
-    "DemandScore",
-    "Estimated_EV"
-]
-
-
-corr_matrix = df[corr_columns].corr()
-
-
-print(corr_matrix)
-
+# Plot heatmap
 plt.figure(figsize=(8,6))
 
-sns.heatmap(
-    corr_matrix,
-    annot=True,
-    cmap="coolwarm",
-    fmt=".2f"
-)
+plt.imshow(correlation, cmap="coolwarm", interpolation="nearest")
+plt.colorbar()
 
-plt.title("Correlation Matrix of EV Demand Factors")
+plt.xticks(range(len(correlation.columns)), correlation.columns, rotation=45)
+plt.yticks(range(len(correlation.columns)), correlation.columns)
 
+plt.title("Correlation Heatmap")
+
+# Display correlation values
+for i in range(len(correlation.columns)):
+    for j in range(len(correlation.columns)):
+        plt.text(
+            j,
+            i,
+            f"{correlation.iloc[i, j]:.2f}",
+            ha="center",
+            va="center",
+            color="black"
+        )
+
+plt.tight_layout()
+plt.show()
 plt.show()
