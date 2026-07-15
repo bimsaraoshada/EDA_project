@@ -15,7 +15,7 @@ western_districts = ["COLOMBO", "GAMPAHA", "KALUTARA"]
 # Filter Districts in western province and save to a new Excel file
 filtered_df = df[df["District"].isin(western_districts)]
 filtered_df.to_excel(
-    r"C:\Users\ASUS\OneDrive\LMS\3.1\Gruop Project\Western_Province_Data.xlsx",
+    r"C:\Users\ASUS\OneDrive\LMS\3.1\Gruop Project                                                          \Western_Province_Data.xlsx",
     index=False
 )
 
