@@ -1,37 +1,19 @@
 import pandas as pd
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 
+# --- Load data ---
 df = pd.read_excel("charging_centers_with_coordinates.xlsx")
 
-import geopandas as gpd
-
-gdf = gpd.GeoDataFrame(
-    df,
-    geometry=gpd.points_from_xy(df["Longitude"], df["Latitude"]),
-    crs="EPSG:4326"
-)
-import geopandas as gpd
-
-# Change this to the correct path if needed
 shapefile = "lka_admin_boundaries.shp"
-
 boundaries = gpd.read_file(shapefile, layer="lka_admin3")
 
 print("Loaded successfully!")
 print(boundaries.columns.tolist())
 print(boundaries.head())
 
-import pandas as pd
-
-df = pd.read_excel("charging_centers_with_coordinates.xlsx")
-
-print(df.sort_values("Longitude", ascending=False)[
-    ["Station Name",
-     "Divisional Secretary's Division",
-     "Latitude",
-     "Longitude"]
-].head(10))
-
-import geopandas as gpd
+# --- Filter to Western Province bounding box ---
 df = df[
     (df["Longitude"] >= 79.7) &
     (df["Longitude"] <= 80.35) &
@@ -39,21 +21,31 @@ df = df[
     (df["Latitude"] <= 7.5)
 ]
 
+# --- Group stations by identical (rounded) coordinates and count them ---
+df["lat_round"] = df["Latitude"].round(5)
+df["lon_round"] = df["Longitude"].round(5)
+
+grouped = (
+    df.groupby(["lat_round", "lon_round"])
+    .agg(
+        station_count=("Station Name", "count"),
+        station_names=("Station Name", lambda x: ", ".join(x))
+    )
+    .reset_index()
+    .rename(columns={"lat_round": "Latitude", "lon_round": "Longitude"})
+)
+
 stations = gpd.GeoDataFrame(
-    df,
-    geometry=gpd.points_from_xy(df["Longitude"], df["Latitude"]),
+    grouped,
+    geometry=gpd.points_from_xy(grouped["Longitude"], grouped["Latitude"]),
     crs="EPSG:4326"
 )
 
-western = boundaries[
-    boundaries["adm1_name"] == "Western"
-]
+western = boundaries[boundaries["adm1_name"] == "Western"]
 
-import matplotlib.pyplot as plt
-
+# --- Plot ---
 fig, ax = plt.subplots(figsize=(12, 12))
 
-# Draw DS Division boundaries
 western.plot(
     ax=ax,
     color="#F8F8F8",
@@ -61,17 +53,35 @@ western.plot(
     linewidth=0.8
 )
 
-# Plot charging stations
-stations.plot(
-    ax=ax,
-    color="#D62728",
-    markersize=45,
-    marker="o",
+max_count = stations["station_count"].max()
+
+cmap = plt.cm.YlOrRd
+norm = mcolors.Normalize(vmin=1, vmax=max_count)
+
+scatter = ax.scatter(
+    stations.geometry.x,
+    stations.geometry.y,
+    c=stations["station_count"],
+    cmap=cmap,
+    norm=norm,
+    s=stations["station_count"].apply(lambda n: 60 + (n - 1) * 40),
     edgecolor="black",
-    linewidth=0.4,
+    linewidth=0.5,
     alpha=0.9,
-    label="Existing EV Charging Stations"
+    zorder=3
 )
+
+for _, row in stations[stations["station_count"] > 1].iterrows():
+    ax.annotate(
+        str(row["station_count"]),
+        xy=(row.geometry.x, row.geometry.y),
+        ha="center", va="center",
+        fontsize=8, fontweight="bold", color="white",
+        zorder=4
+    )
+
+cbar = plt.colorbar(scatter, ax=ax, shrink=0.5, pad=0.02)
+cbar.set_label("Number of Charging Stations at Location", fontsize=10)
 
 plt.title(
     "Spatial Distribution of Existing EV Charging Stations\nWestern Province, Sri Lanka",
@@ -80,12 +90,8 @@ plt.title(
     pad=20
 )
 
-plt.legend(loc="lower left")
-
 plt.axis("off")
-
 plt.tight_layout()
-
 plt.subplots_adjust(top=0.90)
 
 plt.savefig(
